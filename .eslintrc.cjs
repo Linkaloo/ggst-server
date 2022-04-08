@@ -19,5 +19,6 @@ module.exports = {
     "import/no-unresolved": "warn",
     "no-shadow": "warn",
     "linebreak-style": "off",
+    "import/extensions": "off",
   },
 };

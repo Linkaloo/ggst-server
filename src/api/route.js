@@ -1,14 +1,10 @@
 import express from "express";
-import jwt from "jsonwebtoken";
-import { RefreshingAuthProvider, ClientCredentialsAuthProvider } from "@twurple/auth";
-import { promises as fs } from "fs";
-import { ApiClient } from "@twurple/api";
 import Axios from "axios";
-import characterCtrl from "./character.controller";
-import playerCtrl from "./player.controller";
-import attackCtrl from "./attack.controller";
-import { authenticate } from "../middleware/twitchAuth";
-import listener from "../middleware/twitchEventListner";
+import characterCtrl from "./character.controller.js";
+import playerCtrl from "./player.controller.js";
+import attackCtrl from "./attack.controller.js";
+import { authenticate } from "../middleware/twitchAuth.js";
+import listener from "../middleware/twitchEventListner.js";
 
 const router = express.Router();
 

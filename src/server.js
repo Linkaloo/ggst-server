@@ -1,5 +1,5 @@
 import express from "express";
-import characters from "./api/route";
+import characters from "./api/route.js";
 
 const app = express();
 

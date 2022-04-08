@@ -1,4 +1,4 @@
-import db from "../../models/index";
+import db from "../../models/index.js";
 
 const apiGetPlayers = async (req, res) => {
   const query = { guild_id: req.params.guild };

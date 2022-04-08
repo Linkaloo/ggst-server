@@ -1,4 +1,4 @@
-import db from "../../models/index";
+import db from "../../models/index.js";
 
 const apiGetCharacters = async (req, res) => {
   const list = await db.Character.findAll({

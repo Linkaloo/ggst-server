@@ -1,33 +1,26 @@
-const {
-  Model,
-} = require("sequelize");
+import sequelize from "sequelize";
 
-module.exports = (sequelize, DataTypes) => {
-  class Character extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-    static associate(models) {
-      // define association here
-    }
+class Character extends sequelize.Model {
+  static init(sequelize, DataTypes) {
+    return super.init(
+      {
+        name: {
+          type: DataTypes.STRING,
+          allowNull: false,
+          unique: true,
+        },
+        image: {
+          type: DataTypes.STRING,
+        },
+      },
+      {
+        sequelize,
+        modelName: "Character",
+        tableName: "character",
+        timestamps: true,
+        underscored: true,
+      },
+    );
   }
-  Character.init({
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    },
-    image: {
-      type: DataTypes.STRING,
-    },
-  }, {
-    sequelize,
-    modelName: "Character",
-    tableName: "character",
-    timestamps: true,
-    underscored: true,
-  });
-  return Character;
-};
+}
+export default Character;

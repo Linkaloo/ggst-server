@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import Axios from "axios";
 import { application } from "express";
-import { authenticate } from "./twitchAuth";
+import { authenticate } from "./twitchAuth.js";
 
 // Notification request headers
 const TWITCH_MESSAGE_ID = "Twitch-Eventsub-Message-Id".toLowerCase();
