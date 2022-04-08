@@ -9,8 +9,7 @@
     "restore-tables": "npx sequelize-cli db:migrate",
     "restore-seed": "npx sequelize-cli db:seed:all",
     "reset-db": "npm run delete-tables && npm run restore-tables && npm run restore-seed",
-    "start": "babel-node index.js",
-    "prod": "node index.js"
+    "start": "node index.js"
   },
   "keywords": [],
   "author": "",
