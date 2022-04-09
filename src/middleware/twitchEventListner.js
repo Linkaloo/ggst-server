@@ -26,9 +26,11 @@ const getSecret = () => {
 
 // Build the message used to get the HMAC.
 function getHmacMessage(request) {
+  console.log(request.body.toString());
+
   return (request.headers[TWITCH_MESSAGE_ID]
         + request.headers[TWITCH_MESSAGE_TIMESTAMP]
-        + request.body);
+        + request.body.toString());
 }
 
 // Get the HMAC.
@@ -40,15 +42,12 @@ function getHmac(secret, message) {
 
 // Verify whether your signature matches Twitch's signature.
 function verifyMessage(hmac, verifySignature) {
-  console.log(hmac);
-  console.log(verifySignature);
-
   return crypto.timingSafeEqual(Buffer.from(hmac), Buffer.from(verifySignature));
 }
 
 const listener = async (req, res) => {
   console.log("eventSub");
-  console.log(req);
+
   const secret = getSecret();
   const message = getHmacMessage(req);
   const hmac = HMAC_PREFIX + getHmac(secret, message);
