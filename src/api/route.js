@@ -75,7 +75,7 @@ router.route("/twitchevent").get(async (req, res) => {
       transport: {
         method: "webhook",
         callback: "https://ggst-server.herokuapp.com/api/v1/eventSub",
-        secret: "abcdefghij0123456789",
+        secret: "lf2dgfGAMERS",
       },
     };
 
