@@ -21,7 +21,7 @@ const getSecret = () => {
   // TODO: Get your secret from secure storage. This is the secret you passed
   // when you subscribed to the event.
   const secret = "this is some secret";
-  return "abcdefghij0123456789";
+  return "lf2dgfGAMERS";
 };
 
 // Build the message used to get the HMAC.

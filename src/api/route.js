@@ -55,21 +55,22 @@ router.route("/twitchevent").get(async (req, res) => {
   const token = authenticate();
   console.log(token);
 
-  //   const listSub = await Axios({
-  //     method: "GET",
-  //     url: "https://api.twitch.tv/helix/eventsub/subscriptions",
-  //     headers: {
-  //       Authorization: `Bearer ${token.access_token}`,
-  //       "Client-ID": process.env.TWITCH_CLIENTID,
-  //     },
-  //   });
+  const listSub = await Axios({
+    method: "GET",
+    url: "https://api.twitch.tv/helix/eventsub/subscriptions",
+    headers: {
+      Authorization: `Bearer ${token.access_token}`,
+      "Client-ID": process.env.TWITCH_CLIENTID,
+    },
+  });
+  console.log(listSub);
 
   try {
     const body = {
       version: 1,
-      type: "channel.follow",
+      type: "stream.online",
       condition: {
-        broadcaster_user_id: "12826",
+        broadcaster_user_id: "1337",
       },
       transport: {
         method: "webhook",
