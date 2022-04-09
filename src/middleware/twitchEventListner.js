@@ -85,9 +85,8 @@ const listener = async (req, res) => {
   }
 };
 
-export default listener;
-
-export const verify = (req, res, buf, encoding) => {
+const verify = (req, res, buf) => {
+  console.log("verify");
   // is there a hub to verify against
   req.twitch_eventsub = false;
   if (req.headers && req.headers.hasOwnProperty("twitch-eventsub-message-signature")) {
@@ -110,8 +109,10 @@ export const verify = (req, res, buf, encoding) => {
 
     if (req.twitch_signature !== req.twitch_hex) {
       console.error("Signature Mismatch");
+      res.sendStatus(403);
     } else {
       console.log("Signature OK");
+      res.sendStatus(204);
     }
 
     // as an API style/EventSub handler
@@ -120,3 +121,5 @@ export const verify = (req, res, buf, encoding) => {
     res.set("Content-Type", "text/plain");
   }
 };
+
+export default verify;

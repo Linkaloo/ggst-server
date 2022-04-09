@@ -4,7 +4,7 @@ import characterCtrl from "./character.controller.js";
 import playerCtrl from "./player.controller.js";
 import attackCtrl from "./attack.controller.js";
 import { authenticate } from "../middleware/twitchAuth.js";
-import listener, { verify } from "../middleware/twitchEventListner.js";
+import verify from "../middleware/twitchEventListner.js";
 
 const router = express.Router();
 
