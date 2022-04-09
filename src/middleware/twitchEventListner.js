@@ -87,7 +87,7 @@ const listener = async (req, res) => {
 
 function verifySignature(messageSignature, messageID, messageTimestamp, body) {
   const message = messageID + messageTimestamp + body;
-  const signature = crypto.createHmac("sha256", "keepItSecretKeepItSafe").update(message); // Remember to use the same secret set at creation
+  const signature = crypto.createHmac("sha256", "lf2dgfGAMERS").update(message); // Remember to use the same secret set at creation
   const expectedSignatureHeader = `sha256=${signature.digest("hex")}`;
   console.log(expectedSignatureHeader);
   console.log(messageSignature);
