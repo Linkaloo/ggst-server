@@ -95,12 +95,14 @@ function verifySignature(messageSignature, messageID, messageTimestamp, body) {
 }
 
 const verify = (req, res) => {
+  console.log("verify");
   if (!verifySignature(
     req.header("Twitch-Eventsub-Message-Signature"),
     req.header("Twitch-Eventsub-Message-Id"),
     req.header("Twitch-Eventsub-Message-Timestamp"),
     req.rawBody,
   )) {
+    console.log("invalid signature");
     res.status(403).send("Forbidden"); // Reject requests with invalid signatures
   } else if (req.header("Twitch-Eventsub-Message-Type") === "webhook_callback_verification") {
     console.log(req.body.challenge);
