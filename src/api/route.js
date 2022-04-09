@@ -73,7 +73,7 @@ router.route("/twitchevent").get(async (req, res) => {
       },
       transport: {
         method: "webhook",
-        callback: "https://example.com/webhooks/callback",
+        callback: "https://ggst-server.herokuapp.com/api/v1/eventSub",
         secret: "abcdefghij0123456789",
       },
     };
@@ -89,7 +89,7 @@ router.route("/twitchevent").get(async (req, res) => {
       data: body,
     });
 
-    console.log(createSub.data);
+    console.log(createSub);
   } catch (err) {
     console.log(err);
   }
