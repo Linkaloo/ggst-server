@@ -100,4 +100,9 @@ router.route("/twitchevent").get(async (req, res) => {
   // }
 });
 
+router.route("/streamOnline").get(async (req, res) => {
+  console.log("some stream is online");
+  console.log(req);
+});
+
 export default router;
