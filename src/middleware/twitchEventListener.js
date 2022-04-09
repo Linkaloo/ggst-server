@@ -24,10 +24,6 @@ const getSecret = () => {
 
 // Build the message used to get the HMAC.
 function getHmacMessage(request) {
-  const bodyStr = request.body.toString();
-  console.log(bodyStr);
-  console.log(request.body);
-
   return (request.headers[TWITCH_MESSAGE_ID]
         + request.headers[TWITCH_MESSAGE_TIMESTAMP]
         + request.rawBody);
@@ -53,6 +49,7 @@ export const signatureValidation = async (req, res, next) => {
   console.log("eventSub");
 
   if (!req.headers["twitch-eventsub-message-signature"]) {
+    console.log("before next");
     next();
     return;
   }
@@ -66,7 +63,7 @@ export const signatureValidation = async (req, res, next) => {
 
     // Get JSON object from body, so you can process the message.
     const notification = req.body;
-    console.log(req.headers);
+
     if (MESSAGE_TYPE_NOTIFICATION === req.headers[MESSAGE_TYPE]) {
       // TODO: Do something with the event's data.
       console.log("message notification");
