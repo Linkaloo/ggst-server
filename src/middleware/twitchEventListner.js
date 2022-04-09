@@ -118,7 +118,7 @@ const verify = (req, res, buf) => {
     // as an API style/EventSub handler
     // force set a/ensure a correct content type header
     // for all event sub routes
-    res.set("Content-Type", "text/plain");
+    // res.set("Content-Type", "text/plain");
   }
 };
 
