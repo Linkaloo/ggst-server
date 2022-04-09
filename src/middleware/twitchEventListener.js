@@ -1,7 +1,5 @@
+/* eslint-disable import/prefer-default-export */
 import crypto from "crypto";
-import Axios from "axios";
-import { application } from "express";
-import { authenticate } from "./twitchAuth.js";
 
 // Notification request headers
 const TWITCH_MESSAGE_ID = "Twitch-Eventsub-Message-Id".toLowerCase();
@@ -21,14 +19,14 @@ const getSecret = () => {
   // TODO: Get your secret from secure storage. This is the secret you passed
   // when you subscribed to the event.
   const secret = "this is some secret";
-  return "abcdefghij0123456789";
+  return "lf2dgfGAMERS";
 };
 
 // Build the message used to get the HMAC.
 function getHmacMessage(request) {
   return (request.headers[TWITCH_MESSAGE_ID]
         + request.headers[TWITCH_MESSAGE_TIMESTAMP]
-        + request.body);
+        + request.rawBody);
 }
 
 // Get the HMAC.
@@ -40,14 +38,21 @@ function getHmac(secret, message) {
 
 // Verify whether your signature matches Twitch's signature.
 function verifyMessage(hmac, verifySignature) {
-  console.log(hmac);
-  console.log(verifySignature);
-
   return crypto.timingSafeEqual(Buffer.from(hmac), Buffer.from(verifySignature));
 }
 
-const listener = async (req, res) => {
+const handleData = (req) => {
+  console.log(req.body);
+};
+
+export const signatureValidation = async (req, res, next) => {
   console.log("eventSub");
+
+  if (!req.headers["twitch-eventsub-message-signature"]) {
+    next();
+    return;
+  }
+
   const secret = getSecret();
   const message = getHmacMessage(req);
   const hmac = HMAC_PREFIX + getHmac(secret, message);
@@ -56,16 +61,20 @@ const listener = async (req, res) => {
     console.log("signatures match");
 
     // Get JSON object from body, so you can process the message.
-    const notification = JSON.parse(req.body);
-
+    const notification = req.body;
+    console.log(req.headers);
     if (MESSAGE_TYPE_NOTIFICATION === req.headers[MESSAGE_TYPE]) {
       // TODO: Do something with the event's data.
+      console.log("message notification");
+      await handleData(req);
 
       console.log(`Event type: ${notification.subscription.type}`);
       console.log(JSON.stringify(notification.event, null, 4));
 
       res.sendStatus(204);
     } else if (MESSAGE_TYPE_VERIFICATION === req.headers[MESSAGE_TYPE]) {
+      console.log("message verification");
+      await handleData(req);
       res.status(200).send(notification.challenge);
     } else if (MESSAGE_TYPE_REVOCATION === req.headers[MESSAGE_TYPE]) {
       res.sendStatus(204);
@@ -82,5 +91,3 @@ const listener = async (req, res) => {
     res.sendStatus(403);
   }
 };
-
-export default listener;
