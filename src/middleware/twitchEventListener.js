@@ -1,7 +1,5 @@
+/* eslint-disable import/prefer-default-export */
 import crypto from "crypto";
-import Axios from "axios";
-import { application } from "express";
-import { authenticate } from "./twitchAuth.js";
 
 // Notification request headers
 const TWITCH_MESSAGE_ID = "Twitch-Eventsub-Message-Id".toLowerCase();
@@ -32,7 +30,7 @@ function getHmacMessage(request) {
 
   return (request.headers[TWITCH_MESSAGE_ID]
         + request.headers[TWITCH_MESSAGE_TIMESTAMP]
-        + request.body.toString());
+        + request.rawBody);
 }
 
 // Get the HMAC.
@@ -47,8 +45,17 @@ function verifyMessage(hmac, verifySignature) {
   return crypto.timingSafeEqual(Buffer.from(hmac), Buffer.from(verifySignature));
 }
 
-const listener = async (req, res) => {
+const handleData = (req) => {
+  console.log(req.body);
+};
+
+export const signatureValidation = async (req, res, next) => {
   console.log("eventSub");
+
+  if (!req.headers["twitch-eventsub-message-signature"]) {
+    next();
+    return;
+  }
 
   const secret = getSecret();
   const message = getHmacMessage(req);
@@ -58,16 +65,20 @@ const listener = async (req, res) => {
     console.log("signatures match");
 
     // Get JSON object from body, so you can process the message.
-    const notification = JSON.parse(req.body);
-
+    const notification = req.body;
+    console.log(req.headers);
     if (MESSAGE_TYPE_NOTIFICATION === req.headers[MESSAGE_TYPE]) {
       // TODO: Do something with the event's data.
+      console.log("message notification");
+      await handleData(req);
 
       console.log(`Event type: ${notification.subscription.type}`);
       console.log(JSON.stringify(notification.event, null, 4));
 
       res.sendStatus(204);
     } else if (MESSAGE_TYPE_VERIFICATION === req.headers[MESSAGE_TYPE]) {
+      console.log("message verification");
+      await handleData(req);
       res.status(200).send(notification.challenge);
     } else if (MESSAGE_TYPE_REVOCATION === req.headers[MESSAGE_TYPE]) {
       res.sendStatus(204);
@@ -84,33 +95,3 @@ const listener = async (req, res) => {
     res.sendStatus(403);
   }
 };
-
-function verifySignature(messageSignature, messageID, messageTimestamp, body) {
-  const message = messageID + messageTimestamp + body;
-  const signature = crypto.createHmac("sha256", "lf2dgfGAMERS").update(message); // Remember to use the same secret set at creation
-  const expectedSignatureHeader = `sha256=${signature.digest("hex")}`;
-  console.log(expectedSignatureHeader);
-  console.log(messageSignature);
-  return expectedSignatureHeader === messageSignature;
-}
-
-const verify = (req, res) => {
-  console.log("verify");
-  if (!verifySignature(
-    req.header("Twitch-Eventsub-Message-Signature"),
-    req.header("Twitch-Eventsub-Message-Id"),
-    req.header("Twitch-Eventsub-Message-Timestamp"),
-    req.rawBody,
-  )) {
-    console.log("invalid signature");
-    res.status(403).send("Forbidden"); // Reject requests with invalid signatures
-  } else if (req.header("Twitch-Eventsub-Message-Type") === "webhook_callback_verification") {
-    console.log(req.body.challenge);
-    res.send(req.body.challenge); // Returning a 200 status with the received challenge to complete webhook creation flow
-  } else if (req.header("Twitch-Eventsub-Message-Type") === "notification") {
-    console.log(req.body.event); // Implement your own use case with the event data at this block
-    res.send(""); // Default .send is a 200 status
-  }
-};
-
-export default verify;
