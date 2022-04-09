@@ -48,6 +48,7 @@ function verifyMessage(hmac, verifySignature) {
 
 const listener = async (req, res) => {
   console.log("eventSub");
+  console.log(req);
   const secret = getSecret();
   const message = getHmacMessage(req);
   const hmac = HMAC_PREFIX + getHmac(secret, message);
