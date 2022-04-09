@@ -1,6 +1,6 @@
-import sequelize from "sequelize";
+import { Model } from "sequelize";
 
-class Character extends sequelize.Model {
+class Character extends Model {
   static init(sequelize, DataTypes) {
     return super.init(
       {
