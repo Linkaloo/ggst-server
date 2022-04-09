@@ -1,4 +1,4 @@
-import Sequelize from "sequelize";
+import { Sequelize } from "sequelize";
 import configFile from "../config/config.js";
 import Attack from "./Attack.js";
 import Character from "./Character.js";
@@ -9,15 +9,23 @@ const config = configFile[env];
 const db = {};
 
 let sequelize;
-
-console.log(config);
-
-if (process.env.DB_URI) {
+if (process.env.DB_URL) {
   console.log("connecting through URI");
-  sequelize = new Sequelize(process.env.DB_URI);
+  sequelize = new Sequelize(process.env.DB_URL, {
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
+    },
+  });
 } else {
-  sequelize = new Sequelize(config.database, config.username, config.password, config);
+  sequelize = new Sequelize(config.database, config.username, config.password, {
+    host: config.host,
+    dialect: "postgres",
+  });
 }
+
 try {
   await sequelize.authenticate();
   console.log("Connection to database established");
