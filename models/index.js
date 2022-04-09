@@ -9,9 +9,9 @@ const config = configFile[env];
 const db = {};
 
 let sequelize;
-if (process.env.DB_URL) {
+if (process.env.DATABASE_URL) {
   console.log("connecting through URI");
-  sequelize = new Sequelize(process.env.DB_URL, {
+  sequelize = new Sequelize(process.env.DATABASE_URL, {
     dialectOptions: {
       ssl: {
         require: true,
