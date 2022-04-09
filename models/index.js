@@ -10,16 +10,19 @@ const db = {};
 
 let sequelize;
 
+console.log(config);
+
 if (process.env.DB_URI) {
+  console.log("connecting through URI");
   sequelize = new Sequelize(process.env.DB_URI);
 } else {
   sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
 try {
   await sequelize.authenticate();
-  console.log("connection to database established");
+  console.log("Connection to database established");
 } catch (err) {
-  console.error("Unable to connect to the database", err);
+  console.log("Unable to connect to the database");
 }
 
 db.Player = Player.init(sequelize, Sequelize.DataTypes);
