@@ -26,7 +26,9 @@ const getSecret = () => {
 
 // Build the message used to get the HMAC.
 function getHmacMessage(request) {
-  console.log(request.body.toString());
+  const bodyStr = request.body.toString();
+  console.log(bodyStr);
+  console.log(request.body);
 
   return (request.headers[TWITCH_MESSAGE_ID]
         + request.headers[TWITCH_MESSAGE_TIMESTAMP]
@@ -84,3 +86,37 @@ const listener = async (req, res) => {
 };
 
 export default listener;
+
+export const verify = (req, res, buf, encoding) => {
+  // is there a hub to verify against
+  req.twitch_eventsub = false;
+  if (req.headers && req.headers.hasOwnProperty("twitch-eventsub-message-signature")) {
+    req.twitch_eventsub = true;
+
+    // id for dedupe
+    const id = req.headers["twitch-eventsub-message-id"];
+    // check age
+    const timestamp = req.headers["twitch-eventsub-message-timestamp"];
+    // extract algo and signature for comparison
+    const [algo, signature] = req.headers["twitch-eventsub-message-signature"].split("=");
+
+    // you could do
+    // req.twitch_hex = crypto.createHmac(algo, config.hook_secret)
+    // but we know Twitch should always use sha256
+    req.twitch_hex = crypto.createHmac("sha256", "lf2dgfGAMERS")
+      .update(id + timestamp + buf)
+      .digest("hex");
+    req.twitch_signature = signature;
+
+    if (req.twitch_signature !== req.twitch_hex) {
+      console.error("Signature Mismatch");
+    } else {
+      console.log("Signature OK");
+    }
+
+    // as an API style/EventSub handler
+    // force set a/ensure a correct content type header
+    // for all event sub routes
+    res.set("Content-Type", "text/plain");
+  }
+};

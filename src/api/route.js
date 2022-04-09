@@ -4,7 +4,7 @@ import characterCtrl from "./character.controller.js";
 import playerCtrl from "./player.controller.js";
 import attackCtrl from "./attack.controller.js";
 import { authenticate } from "../middleware/twitchAuth.js";
-import listener from "../middleware/twitchEventListner.js";
+import listener, { verify } from "../middleware/twitchEventListner.js";
 
 const router = express.Router();
 
@@ -30,7 +30,7 @@ router.route("/players").put(playerCtrl.apiUpdatePlayer);
 router.route("/players/:guild/:player").delete(playerCtrl.apiDeletePlayer);
 router.route("/players/:guild").delete(playerCtrl.apiDeletePlayer);
 
-router.route("/eventsub").post(listener);
+router.route("/eventsub").post(verify);
 router.route("/twitch").get(async () => {
   const token = await authenticate();
 
