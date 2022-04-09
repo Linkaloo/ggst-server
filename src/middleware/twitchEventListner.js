@@ -85,40 +85,29 @@ const listener = async (req, res) => {
   }
 };
 
-const verify = (req, res, buf) => {
-  console.log("verify");
-  // is there a hub to verify against
-  req.twitch_eventsub = false;
-  if (req.headers && req.headers.hasOwnProperty("twitch-eventsub-message-signature")) {
-    req.twitch_eventsub = true;
+function verifySignature(messageSignature, messageID, messageTimestamp, body) {
+  const message = messageID + messageTimestamp + body;
+  const signature = crypto.createHmac("sha256", "keepItSecretKeepItSafe").update(message); // Remember to use the same secret set at creation
+  const expectedSignatureHeader = `sha256=${signature.digest("hex")}`;
+  console.log(expectedSignatureHeader);
+  console.log(messageSignature);
+  return expectedSignatureHeader === messageSignature;
+}
 
-    // id for dedupe
-    const id = req.headers["twitch-eventsub-message-id"];
-    // check age
-    const timestamp = req.headers["twitch-eventsub-message-timestamp"];
-    // extract algo and signature for comparison
-    const [algo, signature] = req.headers["twitch-eventsub-message-signature"].split("=");
-
-    // you could do
-    // req.twitch_hex = crypto.createHmac(algo, config.hook_secret)
-    // but we know Twitch should always use sha256
-    req.twitch_hex = crypto.createHmac("sha256", "lf2dgfGAMERS")
-      .update(id + timestamp + buf)
-      .digest("hex");
-    req.twitch_signature = signature;
-
-    if (req.twitch_signature !== req.twitch_hex) {
-      console.error("Signature Mismatch");
-      res.sendStatus(403);
-    } else {
-      console.log("Signature OK");
-      res.sendStatus(204);
-    }
-
-    // as an API style/EventSub handler
-    // force set a/ensure a correct content type header
-    // for all event sub routes
-    // res.set("Content-Type", "text/plain");
+const verify = (req, res) => {
+  if (!verifySignature(
+    req.header("Twitch-Eventsub-Message-Signature"),
+    req.header("Twitch-Eventsub-Message-Id"),
+    req.header("Twitch-Eventsub-Message-Timestamp"),
+    req.rawBody,
+  )) {
+    res.status(403).send("Forbidden"); // Reject requests with invalid signatures
+  } else if (req.header("Twitch-Eventsub-Message-Type") === "webhook_callback_verification") {
+    console.log(req.body.challenge);
+    res.send(req.body.challenge); // Returning a 200 status with the received challenge to complete webhook creation flow
+  } else if (req.header("Twitch-Eventsub-Message-Type") === "notification") {
+    console.log(req.body.event); // Implement your own use case with the event data at this block
+    res.send(""); // Default .send is a 200 status
   }
 };
 
