@@ -9,7 +9,7 @@ const config = configFile[env];
 const db = {};
 
 let sequelize;
-if (process.env.DATABASE_URL) {
+if (env === "production") {
   console.log("connecting through URI");
   sequelize = new Sequelize(process.env.DATABASE_URL, {
     dialectOptions: {
