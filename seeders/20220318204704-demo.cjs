@@ -78,7 +78,7 @@ module.exports = {
         region: "USA",
         stream: "https://www.twitch.tv/lordknight",
         character_id: 1,
-        guild_id: 738568921690669056, // Change this to your discord guild id for testing
+        guild_id: "738568921690669056", // Change this to your discord guild id for testing
         created_at: new Date(),
         updated_at: new Date(),
       },
@@ -87,7 +87,7 @@ module.exports = {
         region: "USA",
         stream: "https://www.twitch.tv/eddventur3",
         character_id: 2,
-        guild_id: 738568921690669056, // Change this to your discord guild id for testing
+        guild_id: "738568921690669056", // Change this to your discord guild id for testing
         created_at: new Date(),
         updated_at: new Date(),
       },
@@ -96,7 +96,7 @@ module.exports = {
         region: "USA",
         stream: "https://www.twitch.tv/squirrel147",
         character_id: 3,
-        guild_id: 738568921690669056, // Change this to your discord guild id for testing
+        guild_id: "738568921690669056", // Change this to your discord guild id for testing
         created_at: new Date(),
         updated_at: new Date(),
       },
@@ -105,7 +105,7 @@ module.exports = {
         region: "USA",
         stream: null,
         character_id: 3,
-        guild_id: 738568921690669056, // Change this to your discord guild id for testing
+        guild_id: "738568921690669056", // Change this to your discord guild id for testing
         created_at: new Date(),
         updated_at: new Date(),
       },

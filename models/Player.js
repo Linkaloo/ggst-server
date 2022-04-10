@@ -15,7 +15,7 @@ class Player extends Model {
           type: DataTypes.STRING,
         },
         guild_id: {
-          type: DataTypes.BIGINT,
+          type: DataTypes.STRING,
         },
       },
       {

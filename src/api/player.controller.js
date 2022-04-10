@@ -1,9 +1,15 @@
 import db from "../../models/index.js";
 
 const apiGetPlayers = async (req, res) => {
-  const query = { guild_id: req.params.guild };
+  const playerQuery = {};
   const charQuery = {};
 
+  if (req.params.guild) {
+    playerQuery.guild_id = req.params.guild;
+  }
+  if (req.params.streamName) {
+    playerQuery.stream = `${process.env.BASE_TWITCH_URL}/${req.params.streamName}`;
+  }
   if (req.params.character) {
     charQuery.name = req.params.character;
   }
@@ -17,7 +23,7 @@ const apiGetPlayers = async (req, res) => {
       attributes: ["name", "image"],
       where: charQuery,
     },
-    where: query,
+    where: playerQuery,
   });
 
   const response = {

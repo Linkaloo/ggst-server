@@ -4,7 +4,7 @@ dotenv.config();
 
 const config = {
   development: {
-    username: "username",
+    username: "user",
     password: "password",
     database: "postgres",
     host: "localhost",
