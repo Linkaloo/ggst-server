@@ -29,6 +29,9 @@ class Attack extends Model {
         attack_level: {
           type: DataTypes.INTEGER,
         },
+        name: {
+          type: DataTypes.STRING,
+        },
       },
       {
         sequelize,
