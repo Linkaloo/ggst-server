@@ -13,19 +13,14 @@ router.route("/characters").put(characterCtrl.apiUpdateCharacter);
 
 // moves
 router.route("/attacks").get(attackCtrl.apiGetAttacks);
-router.route("/attacks/:character").get(attackCtrl.apiGetAttacks);
-router.route("/attacks/all/:input").get(attackCtrl.apiGetAttacks);
 router.route("/attacks").post(attackCtrl.apiCreateAttack);
 router.route("/attacks/:character/:input").delete(attackCtrl.apiDeleteAttack);
 router.route("/attacks").put(attackCtrl.apiUpdateAttack);
 
 // players
-router.route("/players/guild=:guild").get(playerCtrl.apiGetPlayers);
-router.route("/players/streamName=:streamName").get(playerCtrl.apiGetPlayers);
-router.route("/players/guild=:guild/character=:character").get(playerCtrl.apiGetPlayers);
+router.route("/players").get(playerCtrl.apiGetPlayers);
 router.route("/players").post(playerCtrl.apiCreatePlayer);
 router.route("/players").put(playerCtrl.apiUpdatePlayer);
-router.route("/players/:guild/:player").delete(playerCtrl.apiDeletePlayer);
-router.route("/players/:guild").delete(playerCtrl.apiDeletePlayer);
+router.route("/players").delete(playerCtrl.apiDeletePlayer);
 
 export default router;

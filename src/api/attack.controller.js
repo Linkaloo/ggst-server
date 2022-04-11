@@ -3,13 +3,13 @@ import db from "../../models/index.js";
 const apiGetAttacks = async (req, res) => {
   const characterQuery = {};
   const attackQuery = {};
+  const { character, input } = req.query;
 
-  if (req.params.character) {
-    characterQuery.name = req.params.character;
+  if (character) {
+    characterQuery.name = character;
   }
-
-  if (req.params.input) {
-    attackQuery.input = req.params.input;
+  if (input) {
+    attackQuery.input = input;
   }
 
   const list = await db.Attack.findAll({

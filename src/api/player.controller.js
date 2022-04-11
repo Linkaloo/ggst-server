@@ -3,15 +3,16 @@ import db from "../../models/index.js";
 const apiGetPlayers = async (req, res) => {
   const playerQuery = {};
   const charQuery = {};
+  const { character, stream, guildId } = req.query;
 
-  if (req.params.guild) {
-    playerQuery.guild_id = req.params.guild;
+  if (guildId) {
+    playerQuery.guild_id = guildId;
   }
-  if (req.params.streamName) {
-    playerQuery.stream = `${process.env.BASE_TWITCH_URL}/${req.params.streamName}`;
+  if (stream) {
+    playerQuery.stream = `${process.env.BASE_TWITCH_URL}/${stream}`;
   }
-  if (req.params.character) {
-    charQuery.name = req.params.character;
+  if (character) {
+    charQuery.name = character;
   }
 
   const list = await db.Player.findAll({
@@ -55,32 +56,64 @@ const apiCreatePlayer = async (req, res) => {
 };
 
 const apiDeletePlayer = async (req, res) => {
+  const playerQuery = {};
+  const charQuery = {};
+  const { player, character, guildId } = req.query;
   let response;
-  const { params } = req;
-  if (Object.keys(params).length === 2) {
-    try {
-      const des = await db.Player.destroy(
-        {
-          where: {
-            name: params.player,
-            guild_id: params.guild,
-          },
-        },
-      );
-      response = {
-        total_deleted: des,
-      };
-    } catch (err) {
-      response = {
-        error: err,
-      };
-    }
+
+  if ((character === undefined && player === undefined) || guildId === undefined) {
+    response = {
+      error: {
+        message: "guild id was not provided or one of character or player was not provided",
+      },
+    };
+    return res.json(response);
+  }
+
+  if (guildId) {
+    playerQuery.guild_id = guildId;
+  }
+  if (player) {
+    playerQuery.name = player;
+  }
+  if (character) {
+    charQuery.name = character;
+  }
+  await db.Player.findAll({
+    attributes: {
+      exclude: ["createdAt", "updatedAt"],
+    },
+    include: {
+      model: db.Character,
+      attributes: ["name", "image"],
+      where: charQuery,
+    },
+    where: playerQuery,
+  });
+  if (character) {
+    const players = await db.Player.findAll({
+      include: {
+        model: db.Character,
+        where: charQuery,
+      },
+      where: {
+        guild_id: playerQuery.guild_id,
+      },
+    });
+    const des = players.length;
+    response = {
+      total_deleted: des,
+    };
+    players.forEach(async (p) => {
+      await p.destroy();
+    });
   } else {
     try {
       const des = await db.Player.destroy(
         {
           where: {
-            guild_id: params.guild,
+            name: playerQuery.name,
+            guild_id: playerQuery.guild_id,
           },
         },
       );
